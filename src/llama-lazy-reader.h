@@ -37,15 +37,36 @@ struct llama_lazy_reader {
     llama_lazy_reader(void * file, size_t base, size_t row_size, int64_t n_rows, int n_threads,
                       enum ggml_type type, int64_t head_dim)
         : file(file), base(base), row_size(row_size), n_rows(n_rows), n_threads(n_threads),
-          head_dim(head_dim), to_float(type == GGML_TYPE_F32 ? nullptr : ggml_get_type_traits(type)->to_float) {
+          head_dim(head_dim), to_float(type == GGML_TYPE_F32 ? nullptr : ggml_get_type_traits(type)->to_float),
+          events((size_t) n_threads, nullptr) {
         // F32 rows have no dequantizer; they are staged as-is, like ggml_get_rows
-        GGML_ASSERT((type == GGML_TYPE_F32 || to_float != nullptr) && head_dim > 0);
+        GGML_ASSERT((type == GGML_TYPE_F32 || to_float != nullptr) && head_dim > 0 && n_threads > 0);
+
+        // Each worker gets its own manual-reset event. A shared/null event is
+        // unsafe for multiple in-flight OVERLAPPED reads on the same handle.
+        for (int i = 0; i < n_threads; ++i) {
+            events[(size_t) i] = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+            if (events[(size_t) i] == nullptr) {
+                for (HANDLE event : events) {
+                    if (event != nullptr) {
+                        CloseHandle(event);
+                    }
+                }
+                throw std::runtime_error(format("failed to create lazy direct-read event: error %lu",
+                        (unsigned long) GetLastError()));
+            }
+        }
     }
 
     llama_lazy_reader(const llama_lazy_reader &) = delete;
     llama_lazy_reader & operator=(const llama_lazy_reader &) = delete;
 
     ~llama_lazy_reader() {
+        for (HANDLE event : events) {
+            if (event != nullptr) {
+                CloseHandle(event);
+            }
+        }
         if (file != nullptr) {
             CloseHandle((HANDLE) file);
         }
@@ -79,6 +100,7 @@ struct llama_lazy_reader {
     const int      n_threads;  // in-flight read workers
     const int64_t  head_dim;   // F32 elements per staged row
     ggml_to_float_t to_float;  // same dequantizer the ggml_get_rows CPU kernel uses
+    std::vector<HANDLE> events; // one manual-reset completion event per worker
 
     // fill dst with the n gathered rows, dequantized to F32:
     // dst[slot * head_dim, ...) = to_float(table[rows[slot]])
@@ -99,7 +121,7 @@ struct llama_lazy_reader {
         // worker w reads rows pairs[n*w/n_workers, n*(w+1)/n_workers)
         auto run_chunk = [&](int w, std::exception_ptr & err) {
             try {
-                run_range(pairs, n * w / n_workers, n * (w + 1) / n_workers, dst);
+                run_range(pairs, n * w / n_workers, n * (w + 1) / n_workers, dst, w);
             } catch (...) {
                 err = std::current_exception();
             }
@@ -137,19 +159,27 @@ struct llama_lazy_reader {
 private:
 #ifdef _WIN32
     // one positional read; ReadFile takes a DWORD length, so chunk big rows
-    void read_exact(size_t off, uint8_t * dst, size_t n) const {
+    void read_exact(size_t off, uint8_t * dst, size_t n, HANDLE event) const {
         while (n > 0) {
             const DWORD want = n > 0x7FFFFFFFu ? 0x7FFFFFFFu : (DWORD) n;
             OVERLAPPED ov = {};
             ov.Offset     = (DWORD) (off & 0xFFFFFFFFu);
             ov.OffsetHigh = (DWORD) (off >> 32);
+            ov.hEvent     = event;
+            ResetEvent(event);
+
             DWORD done = 0;
-            if (!ReadFile((HANDLE) file, dst, want, &done, &ov)) {
-                if (GetLastError() != ERROR_IO_PENDING ||
-                        !GetOverlappedResult((HANDLE) file, &ov, &done, TRUE)) {
+            const BOOL started = ReadFile((HANDLE) file, dst, want, nullptr, &ov);
+            if (!started) {
+                const DWORD read_error = GetLastError();
+                if (read_error != ERROR_IO_PENDING) {
                     throw std::runtime_error(format("lazy direct read of %lu bytes at file offset %zu failed, error %lu",
-                            (unsigned long) want, off, (unsigned long) GetLastError()));
+                            (unsigned long) want, off, (unsigned long) read_error));
                 }
+            }
+            if (!GetOverlappedResult((HANDLE) file, &ov, &done, TRUE)) {
+                throw std::runtime_error(format("lazy direct read of %lu bytes at file offset %zu failed, error %lu",
+                        (unsigned long) want, off, (unsigned long) GetLastError()));
             }
             if (done == 0) {
                 throw std::runtime_error(format("lazy direct read of %lu bytes at file offset %zu failed: unexpected EOF",
@@ -178,7 +208,7 @@ private:
 #endif
 
     void run_range(const std::vector<std::pair<int32_t, int32_t>> & pairs,
-                   int64_t begin, int64_t end, float * dst) const {
+                   int64_t begin, int64_t end, float * dst, int worker) const {
         std::vector<uint8_t> bounce(row_size);
         for (int64_t i = begin; i < end; ) {
             int64_t j = i;
@@ -186,7 +216,7 @@ private:
                 ++j; // dedup: one read serves the whole run
             }
             const size_t off = base + (size_t) pairs[(size_t) i].first * row_size;
-            read_exact(off, bounce.data(), row_size);
+            read_exact(off, bounce.data(), row_size, events[(size_t) worker]);
             float * first = dst + (size_t) pairs[(size_t) i].second * (size_t) head_dim;
             if (to_float) {
                 to_float(bounce.data(), first, head_dim);

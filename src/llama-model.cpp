@@ -1921,10 +1921,11 @@ std::wstring llama_path_to_wide(const std::string & path) {
     if (n <= 0) {
         return {};
     }
-    std::wstring out((size_t) (n - 1), L'\0');
+    std::wstring out((size_t) n, L'\0');
     if (MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, out.data(), n) != n) {
         return {};
     }
+    out.resize((size_t) (n - 1));
     return out;
 }
 } // namespace
@@ -1948,9 +1949,26 @@ const llama_lazy_reader * llama_model_base::load_lazy_reader(llama_model_loader 
         return nullptr;
     }
 
+    const llama_file * file = ml.files[w->idx].get();
+    const std::string & file_name = file->name();
+
+    // The tensor weight records the source shard and an offset relative to
+    // that shard's GGUF file. Validate the full row span before creating
+    // the reader so a bad file association cannot turn into opaque EOFs.
+    const size_t row_size = ggml_row_size(t->type, t->ne[0]);
+    const size_t tensor_bytes = row_size * (size_t) t->ne[1];
+    if (row_size == 0 || (size_t) t->ne[1] > (SIZE_MAX - w->offs) / row_size ||
+            w->offs + tensor_bytes > file->size()) {
+        LLAMA_LOG_ERROR("%s: invalid direct-read span for %s: split=%u file=%s file_size=%zu offset=%zu row_size=%zu rows=%" PRId64 " end=%zu\n",
+                __func__, tensor_name, (unsigned) w->idx, file_name.c_str(), file->size(), w->offs,
+                row_size, t->ne[1], w->offs + tensor_bytes);
+        return nullptr;
+    }
+
     // an independently opened handle for scattered reads; random-access
     // caching instead of sequential readahead for the tiny row reads
-    const HANDLE h = CreateFileW(llama_path_to_wide(ml.files[w->idx]->name()).c_str(), GENERIC_READ,
+    const std::wstring wide_name = llama_path_to_wide(file_name);
+    const HANDLE h = CreateFileW(wide_name.c_str(), GENERIC_READ,
             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
             FILE_FLAG_RANDOM_ACCESS | FILE_FLAG_OVERLAPPED, nullptr);
     if (h == INVALID_HANDLE_VALUE) {
@@ -1965,10 +1983,12 @@ const llama_lazy_reader * llama_model_base::load_lazy_reader(llama_model_loader 
     const int n_threads = 2 * (int) std::max(1u, std::thread::hardware_concurrency());
 
     auto reader = std::make_unique<llama_lazy_reader>(h, w->offs,
-            ggml_row_size(t->type, t->ne[0]), t->ne[1], n_threads, t->type, t->ne[0]);
+            row_size, t->ne[1], n_threads, t->type, t->ne[0]);
 
-    LLAMA_LOG_INFO("%s: direct reads enabled for %s: %" PRId64 " rows of %zu bytes at file offset %zu, %d threads\n",
-            __func__, tensor_name, reader->n_rows, reader->row_size, w->offs, n_threads);
+    LLAMA_LOG_INFO("%s: direct reads enabled for %s: split=%u file=%s file_size=%zu %" PRId64
+            " rows of %zu bytes at file offset %zu, end offset %zu, %d threads\n",
+            __func__, tensor_name, (unsigned) w->idx, file_name.c_str(), file->size(),
+            reader->n_rows, reader->row_size, w->offs, w->offs + tensor_bytes, n_threads);
 
     lazy_readers[tensor_name] = std::move(reader);
     return lazy_readers.at(tensor_name).get();
