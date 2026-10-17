@@ -1,6 +1,6 @@
 # AI Director Direct build contract
 
-This directory is the narrow AI Director build/provenance layer for this Direct fork. It intentionally coexists with the upstream-style llama.cpp presets and workflows instead of replacing them.
+This directory is the narrow AI Director build/provenance layer for this Direct fork. It coexists with upstream source/build machinery while the Direct repository intentionally owns a minimal GitHub Actions surface.
 
 ## Two CUDA version identities
 
@@ -58,4 +58,4 @@ The reference configure sets `FETCHCONTENT_FULLY_DISCONNECTED=ON`, `LLAMA_BUILD_
 
 ## CI boundary
 
-`.github/workflows/aidirector-direct-contract.yml` performs static contract validation on every push and pull request, so later source changes cannot silently drift outside the pinned baseline contract. The actual reference CUDA build is manual and targets a specifically labeled self-hosted Windows x64 runner that must already contain the exact bound toolchain. This avoids silently treating the repository's generic Windows CUDA workflow or a changing GitHub-hosted image as equivalent to the AI Director reference toolchain.
+`.github/workflows/aidirector-direct-contract.yml` is the only active GitHub Actions workflow in this Direct repository. It performs static contract validation on every push and pull request, so later source changes cannot silently drift outside the pinned baseline contract. The inherited upstream workflow set was retired during repository cleanup and is recorded byte-identifiably in `aidirector/retired-upstream-workflows-v1.json`. The actual reference CUDA build remains manual and targets a specifically labeled self-hosted Windows x64 runner that must already contain the exact bound toolchain.

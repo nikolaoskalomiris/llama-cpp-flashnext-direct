@@ -4,10 +4,6 @@
       "bytes": 19322,
       "sha256": "EA9240787A883B488D776102D85C31A4DFAC1887EFA8C2C64B46283CC0945648"
     },
-    ".github/workflows/build-cuda-windows.yml": {
-      "bytes": 6540,
-      "sha256": "1AE27DEEDE9F3B232488EE4792213D21237B294FFE6166EB1F9FA50A59DD3849"
-    },
     "CMakePresets.json": {
       "bytes": 4665,
       "sha256": "A7ABEEE95211607D6E62E54EB9EE2C8182F046D0769F397CC3C6E251F89A090A"
@@ -88,7 +84,7 @@
     "source_path_policy": "Repository checkout path; do not claim accepted historical byte identity from an arbitrary checkout path.",
     "ui_dist_file_count": 0
   },
-  "contract_revision": "1.1",
+  "contract_revision": "1.2",
   "contract_version": 1,
   "cuda_architecture_policy": {
     "cmake_cuda_architectures": "UNSET",
@@ -163,7 +159,7 @@
     "source_builds_are_not_accepted_official_bytes_by_default": true
   },
   "notes": [
-    "The generic upstream Windows CUDA workflow is not the AI Director reference build contract.",
+    "Inherited upstream GitHub Actions workflows are intentionally retired from this Direct repository; their exact predecessor paths/blob identities are recorded in aidirector/retired-upstream-workflows-v1.json.",
     "GGML_CCACHE=ON is preserved from the proven configure recipe, but the reference environment requires the ccache executable to be absent. If ccache is discoverable, the reference build fails closed because introducing it is a recipe change.",
     "The reference recipe uses single-config Ninja and does not introduce ccache when no ccache executable is present.",
     "Do not add deterministic/reproducibility flags that were absent from the proven command set merely to chase historical hashes."
@@ -272,6 +268,17 @@
     ],
     "windows_sdk": "10.0.26100.0"
   },
+  "repository_automation_policy": {
+    "active_workflow_count": 1,
+    "active_workflows": [
+      ".github/workflows/aidirector-direct-contract.yml"
+    ],
+    "cleanup_predecessor_commit": "c65b80f437769a1a497007434498faf513171adb",
+    "policy": "The Direct repository owns a minimal GitHub Actions surface. No inherited upstream workflow file may remain under .github/workflows; the only active workflow is the AI Director Direct contract workflow.",
+    "reference_build_policy": "Manual-only on the specifically labeled self-hosted Windows reference runner.",
+    "retired_upstream_workflow_count": 52,
+    "retired_upstream_workflow_manifest": "aidirector/retired-upstream-workflows-v1.json"
+  },
   "schema": "ai-director-direct-build-contract/v1",
   "shipping_policy": {
     "accepted_hash_match_is_not_required_for_local_custom_builds": true,
@@ -351,14 +358,67 @@
   ],
   "source_baseline": {
     "allowed_overlay_paths": [
-      "aidirector/direct-build-contract-v1.json",
-      "aidirector/build-windows-cuda13.ps1",
-      "aidirector/verify-direct-shipping-set.py",
+      ".github/workflows/ai-issues.yml",
+      ".github/workflows/aidirector-direct-contract.yml",
+      ".github/workflows/bench.yml.disabled",
+      ".github/workflows/build-3rd-party.yml",
+      ".github/workflows/build-and-test-snapdragon.yml",
+      ".github/workflows/build-android.yml",
+      ".github/workflows/build-apple.yml",
+      ".github/workflows/build-cache.yml",
+      ".github/workflows/build-cann.yml",
+      ".github/workflows/build-cmake-pkg.yml",
+      ".github/workflows/build-cpu.yml",
+      ".github/workflows/build-cross.yml",
+      ".github/workflows/build-cuda-ubuntu.yml",
+      ".github/workflows/build-cuda-windows.yml",
+      ".github/workflows/build-ibm.yml",
+      ".github/workflows/build-msys.yml",
+      ".github/workflows/build-opencl.yml",
+      ".github/workflows/build-openvino.yml",
+      ".github/workflows/build-riscv.yml",
+      ".github/workflows/build-sanitize.yml",
+      ".github/workflows/build-self-hosted.yml",
+      ".github/workflows/build-sycl.yml",
+      ".github/workflows/build-virtgpu.yml",
+      ".github/workflows/build-vulkan.yml",
+      ".github/workflows/build-wasm.yml",
+      ".github/workflows/build-webgpu.yml",
+      ".github/workflows/check-vendor.yml",
+      ".github/workflows/close-issue.yml",
+      ".github/workflows/code-style.yml",
+      ".github/workflows/copilot-setup-steps.yml",
+      ".github/workflows/docker.yml",
+      ".github/workflows/editorconfig.yml",
+      ".github/workflows/fusion.yml",
+      ".github/workflows/gguf-publish.yml",
+      ".github/workflows/hip-quality-check.yml",
+      ".github/workflows/labeler.yml",
+      ".github/workflows/make-release.yml",
+      ".github/workflows/pr-draft-label.yml",
+      ".github/workflows/pre-tokenizer-hashes.yml",
+      ".github/workflows/python-check-requirements.yml",
+      ".github/workflows/python-lint.yml",
+      ".github/workflows/python-type-check.yml",
+      ".github/workflows/release.yml",
+      ".github/workflows/server-sanitize.yml",
+      ".github/workflows/server-self-hosted.yml",
+      ".github/workflows/server.yml",
+      ".github/workflows/ui-build-self-hosted.yml",
+      ".github/workflows/ui-build.yml",
+      ".github/workflows/ui-publish.yml",
+      ".github/workflows/ui-self-hosted.yml",
+      ".github/workflows/ui.yml",
+      ".github/workflows/update-ops-docs.yml",
+      ".github/workflows/winget.yml",
       "aidirector/README.md",
-      ".github/workflows/aidirector-direct-contract.yml"
+      "aidirector/build-windows-cuda13.ps1",
+      "aidirector/direct-build-contract-v1.json",
+      "aidirector/retired-upstream-workflows-v1.json",
+      "aidirector/verify-direct-shipping-set.py"
     ],
     "commit": "c8f321699adbd0035c8c755bdefcb4182705262b",
-    "policy": "Contract v1 is valid only while changes relative to the baseline commit are confined to the allowed overlay paths.",
+    "policy": "Contract v1 remains anchored to the accepted source baseline. Changes relative to that baseline must be confined to the explicit AI Director overlay and the explicitly retired inherited workflow paths.",
     "repository": "nikolaoskalomiris/llama-cpp-flashnext-direct",
     "tree": "a17cf64683bc6877e2dbc4e0b4ef8933106257fb"
   }

@@ -47,6 +47,16 @@ def load_contract(path: Path) -> dict:
     required=set((c.get('reference_toolchain') or {}).get('vcvars_resolution_must_match') or [])
     if required != {'cl.exe','link.exe','lib.exe','rc.exe','mt.exe'}:
         raise ValueError('vcvars resolution binding set is incomplete')
+    policy=c.get('repository_automation_policy') or {}
+    active=policy.get('active_workflows') or []
+    if active != ['.github/workflows/aidirector-direct-contract.yml']:
+        raise ValueError('Direct repository must declare exactly the AI Director contract workflow as active')
+    if int(policy.get('active_workflow_count',0)) != 1:
+        raise ValueError('Direct repository active workflow count must be 1')
+    if int(policy.get('retired_upstream_workflow_count',-1)) != 52:
+        raise ValueError('Retired upstream workflow count must be 52')
+    if policy.get('retired_upstream_workflow_manifest') != 'aidirector/retired-upstream-workflows-v1.json':
+        raise ValueError('Retired workflow manifest path mismatch')
     return c
 
 def check_overlay(repo: Path, contract: dict) -> dict:
@@ -63,6 +73,16 @@ def check_overlay(repo: Path, contract: dict) -> dict:
     unexpected=[x for x in changed if x not in allowed]
     return {'head':head,'changed':changed,'unexpected':unexpected}
 
+def check_workflow_surface(repo: Path, contract: dict) -> dict:
+    policy=contract['repository_automation_policy']
+    expected=set(policy['active_workflows'])
+    workflow_dir=repo/'.github'/'workflows'
+    if not workflow_dir.is_dir():
+        raise RuntimeError('Workflow directory is missing')
+    actual={str(p.relative_to(repo)).replace('\\','/') for p in workflow_dir.iterdir() if p.is_file()}
+    missing=sorted(expected-actual); unexpected=sorted(actual-expected)
+    return {'expected':sorted(expected),'actual':sorted(actual),'missing':missing,'unexpected':unexpected}
+
 def main() -> int:
     ap=argparse.ArgumentParser()
     ap.add_argument('--contract',type=Path,default=Path(__file__).with_name('direct-build-contract-v1.json'))
@@ -78,11 +98,16 @@ def main() -> int:
         ov=check_overlay(ns.repo_root,c); result['overlay']=ov
         if ov['unexpected']:
             raise RuntimeError('Unexpected source drift: '+', '.join(ov['unexpected']))
+        wf=check_workflow_surface(ns.repo_root,c); result['workflow_surface']=wf
+        if wf['missing'] or wf['unexpected']:
+            raise RuntimeError('Workflow surface mismatch; missing='+str(wf['missing'])+'; unexpected='+str(wf['unexpected']))
     if ns.contract_only:
         print('DIRECT_CONTRACT_VALIDATION=PASS')
         print('SHIPPING_SET_ENTRIES=17')
         print('CMAKE_CUDA_ARCHITECTURES_POLICY=UNSET')
         print('UI_PROVISIONING=OFF')
+        if ns.repo_root:
+            print('WORKFLOW_SURFACE=PASS_EXACT_1_ACTIVE')
         return 0
     if not ns.shipping_dir:
         ap.error('--shipping-dir is required unless --contract-only is used')

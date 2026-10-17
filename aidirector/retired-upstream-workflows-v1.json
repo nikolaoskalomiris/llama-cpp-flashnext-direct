@@ -1,0 +1,329 @@
+{
+  "cleanup_predecessor_commit": "c65b80f437769a1a497007434498faf513171adb",
+  "cleanup_predecessor_tree": "ab265c1845b4de30232fec46a376c8166c2ed55e",
+  "policy": "These inherited workflow files are intentionally absent from the cleaned Direct repository. Git history plus this manifest preserve their predecessor identities; they must not be reintroduced without an explicit Direct repository automation review.",
+  "purpose": "Audit record for inherited upstream GitHub Actions retired from the AI Director Direct repository.",
+  "retained_active_workflow": {
+    "bytes": 1744,
+    "git_blob_sha1": "eefb997d80299b4fd73d44c688fa9cf6f4496fb4",
+    "path": ".github/workflows/aidirector-direct-contract.yml",
+    "sha256": "D552C51484FFDFA07B609A978E7538D4533CB7F3F5AA9E83533AEF1725D1499F"
+  },
+  "retired_workflow_count": 52,
+  "retired_workflows": [
+    {
+      "bytes": 2904,
+      "git_blob_sha1": "c762901b5ac43c284b9ff1002cace4e6e03984b4",
+      "mode": "100644",
+      "path": ".github/workflows/ai-issues.yml"
+    },
+    {
+      "bytes": 10473,
+      "git_blob_sha1": "f2d7e16e981ac7c694749bb17e4e78bc68828871",
+      "mode": "100644",
+      "path": ".github/workflows/bench.yml.disabled"
+    },
+    {
+      "bytes": 1213,
+      "git_blob_sha1": "82e53dbafb39bb478b8545dd8d36bd3e633b2ada",
+      "mode": "100644",
+      "path": ".github/workflows/build-3rd-party.yml"
+    },
+    {
+      "bytes": 4856,
+      "git_blob_sha1": "3e857d48e39feb099bbeac2aa35d13cbd4ed813b",
+      "mode": "100644",
+      "path": ".github/workflows/build-and-test-snapdragon.yml"
+    },
+    {
+      "bytes": 4221,
+      "git_blob_sha1": "d3907d150292be1db89108fcd2b44b784d8052ea",
+      "mode": "100644",
+      "path": ".github/workflows/build-android.yml"
+    },
+    {
+      "bytes": 8617,
+      "git_blob_sha1": "c23f40f14642d2c19d042b335547318bb9bf8c28",
+      "mode": "100644",
+      "path": ".github/workflows/build-apple.yml"
+    },
+    {
+      "bytes": 3570,
+      "git_blob_sha1": "27512a142ec5dd6636c0997a29f3002020f024d1",
+      "mode": "100644",
+      "path": ".github/workflows/build-cache.yml"
+    },
+    {
+      "bytes": 3309,
+      "git_blob_sha1": "6d76ed49992efb058fd399fb6418e51f74d06e90",
+      "mode": "100644",
+      "path": ".github/workflows/build-cann.yml"
+    },
+    {
+      "bytes": 2024,
+      "git_blob_sha1": "c44fba2c69539ce20c742b85968ccfa00b919767",
+      "mode": "100644",
+      "path": ".github/workflows/build-cmake-pkg.yml"
+    },
+    {
+      "bytes": 8340,
+      "git_blob_sha1": "ddda55f1c6b058e819b33e36f8be3fe7c96c6afb",
+      "mode": "100644",
+      "path": ".github/workflows/build-cpu.yml"
+    },
+    {
+      "bytes": 13660,
+      "git_blob_sha1": "eef78b674175654d379f5d95a1f4ee2575d25d8c",
+      "mode": "100644",
+      "path": ".github/workflows/build-cross.yml"
+    },
+    {
+      "bytes": 5395,
+      "git_blob_sha1": "30029887c3d00d643e3a5056e3050d655a513f77",
+      "mode": "100644",
+      "path": ".github/workflows/build-cuda-ubuntu.yml"
+    },
+    {
+      "bytes": 6357,
+      "git_blob_sha1": "e08553e6cdfc9c0a4cbf1fa0a51db1363156bd0b",
+      "mode": "100644",
+      "path": ".github/workflows/build-cuda-windows.yml"
+    },
+    {
+      "bytes": 4436,
+      "git_blob_sha1": "355487e97b8d91fa2a2f992554da8d9c7c457b9b",
+      "mode": "100644",
+      "path": ".github/workflows/build-ibm.yml"
+    },
+    {
+      "bytes": 1976,
+      "git_blob_sha1": "9f05a9e9475d5b07c432d5bcf0588dff99d7e044",
+      "mode": "100644",
+      "path": ".github/workflows/build-msys.yml"
+    },
+    {
+      "bytes": 2774,
+      "git_blob_sha1": "9be2ba1eb69927ada0f4ef73db61d9bb2f45fba9",
+      "mode": "100644",
+      "path": ".github/workflows/build-opencl.yml"
+    },
+    {
+      "bytes": 5628,
+      "git_blob_sha1": "daa08b1bf949469ca20fb1f1b4ceeaa99193edb8",
+      "mode": "100644",
+      "path": ".github/workflows/build-openvino.yml"
+    },
+    {
+      "bytes": 3183,
+      "git_blob_sha1": "23a64454e9dbfb5a8e6b6f63cfe949d3b914a173",
+      "mode": "100644",
+      "path": ".github/workflows/build-riscv.yml"
+    },
+    {
+      "bytes": 2960,
+      "git_blob_sha1": "89fcff71d445b917be775bb23a1624fad354bb97",
+      "mode": "100644",
+      "path": ".github/workflows/build-sanitize.yml"
+    },
+    {
+      "bytes": 16309,
+      "git_blob_sha1": "d54f71ac513eaadf94ef3f2c9e813341ac12ec01",
+      "mode": "100644",
+      "path": ".github/workflows/build-self-hosted.yml"
+    },
+    {
+      "bytes": 5483,
+      "git_blob_sha1": "9ddb894f27303c61ecbcc9c6a53c1b19628a1e91",
+      "mode": "100644",
+      "path": ".github/workflows/build-sycl.yml"
+    },
+    {
+      "bytes": 1134,
+      "git_blob_sha1": "5b740590d6b8734d20312c1e923c3eecf71e25c2",
+      "mode": "100644",
+      "path": ".github/workflows/build-virtgpu.yml"
+    },
+    {
+      "bytes": 6569,
+      "git_blob_sha1": "21d2a773531f81849a430880b18ce6f27dfb73fa",
+      "mode": "100644",
+      "path": ".github/workflows/build-vulkan.yml"
+    },
+    {
+      "bytes": 2886,
+      "git_blob_sha1": "5a3166ce6885a063a85eff177af5938cb9e81c2b",
+      "mode": "100644",
+      "path": ".github/workflows/build-wasm.yml"
+    },
+    {
+      "bytes": 5808,
+      "git_blob_sha1": "ec582ff274b33df338eeb92d2252599e57a75108",
+      "mode": "100644",
+      "path": ".github/workflows/build-webgpu.yml"
+    },
+    {
+      "bytes": 1224,
+      "git_blob_sha1": "1671ed7b8bd2775ed5b9f322d39f49a1af42b5f2",
+      "mode": "100644",
+      "path": ".github/workflows/check-vendor.yml"
+    },
+    {
+      "bytes": 954,
+      "git_blob_sha1": "4698cee5594b1337f059926e9ff487c578360dc0",
+      "mode": "100644",
+      "path": ".github/workflows/close-issue.yml"
+    },
+    {
+      "bytes": 1733,
+      "git_blob_sha1": "c88396c0a7d1c2d76aa729672196b0db2c68b243",
+      "mode": "100644",
+      "path": ".github/workflows/code-style.yml"
+    },
+    {
+      "bytes": 2180,
+      "git_blob_sha1": "61c05dcac590990bad35855e4cfa9dd56504094f",
+      "mode": "100644",
+      "path": ".github/workflows/copilot-setup-steps.yml"
+    },
+    {
+      "bytes": 25926,
+      "git_blob_sha1": "1de25b522de8505e39c3e280010289a4e5d3573d",
+      "mode": "100644",
+      "path": ".github/workflows/docker.yml"
+    },
+    {
+      "bytes": 569,
+      "git_blob_sha1": "53f6a0ccfda457aa8855802bfc7a5f2e984f8d86",
+      "mode": "100644",
+      "path": ".github/workflows/editorconfig.yml"
+    },
+    {
+      "bytes": 1880,
+      "git_blob_sha1": "7c8596467aab655d18a6f74e746c82f063516270",
+      "mode": "100644",
+      "path": ".github/workflows/fusion.yml"
+    },
+    {
+      "bytes": 1272,
+      "git_blob_sha1": "fb8eab3cdb3b6a43bff2cde051ed456179689c09",
+      "mode": "100644",
+      "path": ".github/workflows/gguf-publish.yml"
+    },
+    {
+      "bytes": 3105,
+      "git_blob_sha1": "ee4e746f2f10dfd968cd3fa1346efa0226500f9a",
+      "mode": "100644",
+      "path": ".github/workflows/hip-quality-check.yml"
+    },
+    {
+      "bytes": 352,
+      "git_blob_sha1": "eab20c68811e044894e29cd2793de40bc357559a",
+      "mode": "100644",
+      "path": ".github/workflows/labeler.yml"
+    },
+    {
+      "bytes": 6173,
+      "git_blob_sha1": "d1c6dca5dbd97d155382ca0c707f5d19a32e4ec0",
+      "mode": "100644",
+      "path": ".github/workflows/make-release.yml"
+    },
+    {
+      "bytes": 638,
+      "git_blob_sha1": "d2594c823d7f623664b3cb32fcce658ab5194a7f",
+      "mode": "100644",
+      "path": ".github/workflows/pr-draft-label.yml"
+    },
+    {
+      "bytes": 1557,
+      "git_blob_sha1": "bfb79f6983f2ca68a55c5378c8b6fb9958a65155",
+      "mode": "100644",
+      "path": ".github/workflows/pre-tokenizer-hashes.yml"
+    },
+    {
+      "bytes": 946,
+      "git_blob_sha1": "e21c7da57202c77d66337520cc618b3dd3053d7e",
+      "mode": "100644",
+      "path": ".github/workflows/python-check-requirements.yml"
+    },
+    {
+      "bytes": 833,
+      "git_blob_sha1": "1e5d64c1aee6d088476093bc63595fb9f884c569",
+      "mode": "100644",
+      "path": ".github/workflows/python-lint.yml"
+    },
+    {
+      "bytes": 1157,
+      "git_blob_sha1": "f3695be96f7597582c34900894616c479a68ddf6",
+      "mode": "100644",
+      "path": ".github/workflows/python-type-check.yml"
+    },
+    {
+      "bytes": 74713,
+      "git_blob_sha1": "c72602b14edde110dd2532e631cf03ae6c7f07b7",
+      "mode": "100644",
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "bytes": 3904,
+      "git_blob_sha1": "43746e91eb3567a55f03287d9a1a13a6e75d86ab",
+      "mode": "100644",
+      "path": ".github/workflows/server-sanitize.yml"
+    },
+    {
+      "bytes": 7654,
+      "git_blob_sha1": "8dc4637c457004562057471fb346ebee968e0a69",
+      "mode": "100644",
+      "path": ".github/workflows/server-self-hosted.yml"
+    },
+    {
+      "bytes": 5807,
+      "git_blob_sha1": "77fe7dbd3aa7661d03383576b75317addedb5861",
+      "mode": "100644",
+      "path": ".github/workflows/server.yml"
+    },
+    {
+      "bytes": 842,
+      "git_blob_sha1": "e93a89003b23848d453699142bee287b5fa1d51a",
+      "mode": "100644",
+      "path": ".github/workflows/ui-build-self-hosted.yml"
+    },
+    {
+      "bytes": 1556,
+      "git_blob_sha1": "cbadaa9e76d1b411174142ba14263e501566a4ea",
+      "mode": "100644",
+      "path": ".github/workflows/ui-build.yml"
+    },
+    {
+      "bytes": 2473,
+      "git_blob_sha1": "e64ef32f801c301463b716f3fd1d2afc6fc967c0",
+      "mode": "100644",
+      "path": ".github/workflows/ui-publish.yml"
+    },
+    {
+      "bytes": 3619,
+      "git_blob_sha1": "63521ead2d6ac2db62c6b5cefb796644a08cdad2",
+      "mode": "100644",
+      "path": ".github/workflows/ui-self-hosted.yml"
+    },
+    {
+      "bytes": 4433,
+      "git_blob_sha1": "f395c0b52873edf8f106c53eeb8ef8e31e9ad688",
+      "mode": "100644",
+      "path": ".github/workflows/ui.yml"
+    },
+    {
+      "bytes": 1459,
+      "git_blob_sha1": "bb01c7e56bab059a4a3ec4513d9d3bfa01b18c3e",
+      "mode": "100644",
+      "path": ".github/workflows/update-ops-docs.yml"
+    },
+    {
+      "bytes": 1666,
+      "git_blob_sha1": "c0a814f3adbf12915ca6bbdd69bdcd2188f267e3",
+      "mode": "100644",
+      "path": ".github/workflows/winget.yml"
+    }
+  ],
+  "schema": "ai-director-direct-retired-upstream-workflows/v1",
+  "source_workflow_tree_git_sha1": "9e0b862742f7d5a9abeac89f1373064ae01c646c"
+}
