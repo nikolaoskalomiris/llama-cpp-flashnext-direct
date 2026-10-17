@@ -1,0 +1,63 @@
+name: AI Director Direct contract
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+    inputs:
+      run_reference_build:
+        description: 'Run the reference CUDA build on the pre-provisioned self-hosted runner'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  contract-static:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Validate contract and overlay boundary
+        shell: pwsh
+        run: |
+          python .\aidirector\verify-direct-shipping-set.py --contract-only --repo-root .
+          if ($LASTEXITCODE -ne 0) { throw "Direct contract validation failed" }
+
+      - name: Parse PowerShell build entry point
+        shell: pwsh
+        run: |
+          $Errors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path '.\aidirector\build-windows-cuda13.ps1'),
+            [ref]$null,
+            [ref]$Errors
+          )
+          if ($Errors.Count -ne 0) {
+            $Errors | ForEach-Object { Write-Error $_.Message }
+            throw "PowerShell parse failed"
+          }
+
+  reference-build:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_reference_build }}
+    runs-on: [self-hosted, Windows, X64, aidirector-direct-reference]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build reference Direct shipping set
+        shell: powershell
+        run: |
+          .\aidirector\build-windows-cuda13.ps1
